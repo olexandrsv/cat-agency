@@ -40,13 +40,13 @@ func (s *server) createCat(c *gin.Context) {
 		return
 	}
 
-	cat, err := s.service.CreateCat(experience, breed, salary)
+	err := s.service.CreateCat(experience, breed, salary)
 	if err != nil {
 		common.WriteError(c, err)
 		return
 	}
 
-	c.JSON(http.StatusOK, cat)
+	c.JSON(http.StatusOK, "")
 }
 
 func (s *server) updateCat(c *gin.Context) {
@@ -111,5 +111,5 @@ func (s *server) deleteCat(c *gin.Context) {
 		return
 	}
 
-	c.JSON(http.StatusOK, "") 
+	c.JSON(http.StatusOK, "")
 }

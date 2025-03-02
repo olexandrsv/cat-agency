@@ -12,7 +12,7 @@ import (
 )
 
 type CatsService interface {
-	CreateCat(int, string, float64) (models.Cat, error)
+	CreateCat(int, string, float64) (error)
 	UpdateCat(int, float64) error
 	DeleteCat(int) error
 	GetCats() ([]models.Cat, error)
@@ -29,16 +29,16 @@ func New(repo repository.CatsRepository) CatsService {
 	}
 }
 
-func (s *service) CreateCat(experience int, breed string, salary float64) (models.Cat, error) {
+func (s *service) CreateCat(experience int, breed string, salary float64) error {
 	if err := validateCatBreed(breed); err != nil {
-		return models.Cat{}, err
+		return err
 	}
-	cat, err := s.repo.CreateCat(experience, breed, salary)
+	err := s.repo.CreateCat(experience, breed, salary)
 	if err != nil {
-		return models.Cat{}, err
+		return err
 	}
 
-	return cat, nil
+	return nil
 }
 
 var validBreeds map[string]bool

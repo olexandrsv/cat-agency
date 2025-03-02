@@ -10,7 +10,7 @@ import (
 )
 
 type CatsRepository interface {
-	CreateCat(int, string, float64) (models.Cat, error)
+	CreateCat(int, string, float64) error
 	UpdateCat(int, float64) error
 	DeleteCat(int) error
 	GetCats() ([]models.Cat, error)
@@ -27,23 +27,12 @@ func New(db *sql.DB) CatsRepository {
 	}
 }
 
-func (r *repo) CreateCat(experience int, breed string, salary float64) (models.Cat, error) {
-	res, err := r.db.Exec("INSERT INTO Cats (experience, breed, salary) VALUES ($1, $2, $3)", experience, breed, salary)
+func (r *repo) CreateCat(experience int, breed string, salary float64) error {
+	_, err := r.db.Exec("INSERT INTO Cats (experience, breed, salary) VALUES ($1, $2, $3)", experience, breed, salary)
 	if err != nil {
-		return models.Cat{}, common.NewDatabseError(errors.WithStack(err))
+		return common.NewDatabseError(errors.WithStack(err))
 	}
-
-	id, err := res.LastInsertId()
-	if err != nil {
-		return models.Cat{}, common.NewDatabseError(errors.WithStack(err))
-	}
-
-	return models.Cat{
-		ID:         int(id),
-		Experience: experience,
-		Breed:      breed,
-		Salary:     salary,
-	}, nil
+	return nil
 }
 
 func (r *repo) DeleteCat(id int) error {
