@@ -32,7 +32,7 @@ func (r *repo) CreateMission(targets []models.Target) error {
 }
 
 func (r *repo) insertMission(tx *sql.Tx) (int, error) {
-	res, err := tx.Exec("INSERT INTO missions (cat_id) VALUES (null)")
+	res, err := tx.Exec("INSERT INTO missions (cat_id, complete) VALUES (null, false)")
 	if err != nil {
 		return 0, common.NewDatabseError(errors.WithStack(err))
 	}
