@@ -89,7 +89,7 @@ func (s *server) getCat(c *gin.Context) {
 
 	cat, err := s.service.GetCat(id)
 	if err != nil {
-		common.WriteError(c, v.Err())
+		common.WriteError(c, err)
 		return
 	}
 
@@ -107,7 +107,7 @@ func (s *server) deleteCat(c *gin.Context) {
 
 	err := s.service.DeleteCat(id)
 	if err != nil {
-		common.WriteError(c, v.Err())
+		common.WriteError(c, err)
 		return
 	}
 
