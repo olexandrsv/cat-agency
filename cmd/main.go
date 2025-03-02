@@ -4,6 +4,7 @@ import (
 	catsRepo "cat-agency/internal/cats/repository"
 	catsServer "cat-agency/internal/cats/server"
 	catsService "cat-agency/internal/cats/service"
+	"cat-agency/internal/common"
 	"database/sql"
 
 	// "fmt"
@@ -20,6 +21,7 @@ import (
 
 func main() {
 	engine := gin.Default()
+	engine.Use(common.Middleware())
 	db := openSQLConnection()
 
 	cRepo := catsRepo.New(db)
