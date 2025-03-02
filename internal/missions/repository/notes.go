@@ -76,3 +76,104 @@ func (r *repo) linkNotesToTargets(tx *sql.Tx, targetID int, notesIDs []int) erro
 
 	return nil
 }
+
+func (r *repo) DeleteNotes(tx *sql.Tx, targetID int) error {
+	_, err := tx.Exec("DELETE FROM notes WHERE id IN (SELECT note_id FROM target_notes WHERE target_id=$1)", targetID)
+	if err != nil {
+		return common.NewDatabseError(err)
+	}
+
+	_, err = tx.Exec("DELETE FROM target_notes WHERE target_id=$1", targetID)
+	if err != nil {
+		return common.NewDatabseError(err)
+	}
+	return nil
+}
+
+func (r *repo) GetNotes(targetID int) ([]models.Note, error) {
+	rows, err := r.db.Query(`SELECT id, msg FROM notes INNER JOIN target_notes 
+		ON target_notes.note_id=notes.id WHERE target_notes.target_id=$1`, targetID)
+	if err != nil {
+		return nil, common.NewDatabseError(errors.WithStack(err))	
+	}
+	var notes []models.Note
+	for rows.Next() {
+		var note models.Note 
+		if err := rows.Scan(&note.ID, &note.Message); err != nil {
+			return nil, common.NewDatabseError(errors.WithStack(err))	
+		}
+		
+		notes = append(notes, note)
+	}
+
+	return notes, nil
+}
+
+func (r *repo) UpdateNote(noteID int, msg string) error {
+	_, err := r.db.Exec("UPDATE notes SET msg=$1 WHERE id=$2", msg, noteID)
+	if err == sql.ErrNoRows {
+		return common.NewNoRowsError(err)
+	}
+	if err != nil {
+		return common.NewDatabseError(err)
+	}
+
+	return nil
+}
+
+// func (r *repo) targetNotesIDs(targetID int) ([]int, error) {
+// 	rows, err := r.db.Query("SELECT note_id FROM target_notes WHERE target_id=$1", targetID)
+// 	if err == sql.ErrNoRows {
+// 		return nil, common.NewNoRowsError(err)
+// 	}
+// 	if err != nil {
+// 		return nil, common.NewDatabseError(err)
+// 	}
+
+// 	var ids []int
+// 	for rows.Next() {
+// 		var id int
+// 		if err := rows.Scan(&id); err != nil {
+// 			return nil, common.NewDatabseError(err)
+// 		}
+// 		ids = append(ids, id)
+// 	}
+
+// 	return ids, nil
+// }
+
+// func (r *repo) deleteNotes(tx *sql.Tx, notesIDs []int) error {
+// 	var buff bytes.Buffer
+// 	buff.WriteString("DELETE FROM notes WHERE id IN (")
+// 	for i, noteID := range notesIDs {
+// 		buff.WriteString(strconv.Itoa(noteID))
+// 		if i != len(notesIDs)-1 {
+// 			buff.WriteString(",")
+// 		}
+// 	}
+// 	buff.WriteString(");")
+
+// 	_, err := tx.Exec(buff.String())
+// 	if err != nil {
+// 		return common.NewDatabseError(err)
+// 	}
+// 	return nil
+// }
+
+// func (r *repo) deleteNotesLinks(tx *sql.Tx, notesIDs []int) error {
+// 	var buff bytes.Buffer
+// 	buff.WriteString("DELETE FROM target_notes WHERE note_id IN (")
+// 	for i, noteID := range notesIDs {
+// 		buff.WriteString(strconv.Itoa(noteID))
+// 		if i != len(notesIDs)-1 {
+// 			buff.WriteString(",")
+// 		}
+// 	}
+// 	buff.WriteString(");")
+
+// 	_, err := tx.Exec(buff.String())
+// 	if err != nil {
+// 		return common.NewDatabseError(err)
+// 	}
+// 	return nil
+// }

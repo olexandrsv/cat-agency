@@ -21,12 +21,7 @@ type repo struct {
 	db *sql.DB
 }
 
-func New() CatsRepository {
-	db, err := sql.Open("sqlite3", "./../cat-agency")
-	if err != nil {
-		panic(err)
-	}
-
+func New(db *sql.DB) CatsRepository {
 	return &repo{
 		db: db,
 	}
