@@ -10,13 +10,13 @@ import (
 
 type server struct {
 	e       *gin.Engine
-	serivce service.CatsService
+	service service.CatsService
 }
 
 func newServer(e *gin.Engine, service service.CatsService) *server {
 	return &server{
 		e:       e,
-		serivce: service,
+		service: service,
 	}
 }
 
@@ -40,7 +40,7 @@ func (s *server) createCat(c *gin.Context) {
 		return
 	}
 
-	cat, err := s.serivce.CreateCat(experience, breed, salary)
+	cat, err := s.service.CreateCat(experience, breed, salary)
 	if err != nil {
 		common.WriteError(c, err)
 		return
@@ -59,7 +59,7 @@ func (s *server) updateCat(c *gin.Context) {
 		return
 	}
 
-	err := s.serivce.UpdateCat(id, salary)
+	err := s.service.UpdateCat(id, salary)
 	if err != nil {
 		common.WriteError(c, err)
 		return
@@ -69,7 +69,7 @@ func (s *server) updateCat(c *gin.Context) {
 }
 
 func (s *server) getCats(c *gin.Context) {
-	cats, err := s.serivce.GetCats()
+	cats, err := s.service.GetCats()
 	if err != nil {
 		common.WriteError(c, err)
 		return
@@ -87,7 +87,7 @@ func (s *server) getCat(c *gin.Context) {
 		return
 	}
 
-	cat, err := s.serivce.GetCat(id)
+	cat, err := s.service.GetCat(id)
 	if err != nil {
 		common.WriteError(c, v.Err())
 		return
@@ -105,7 +105,7 @@ func (s *server) deleteCat(c *gin.Context) {
 		return
 	}
 
-	err := s.serivce.DeleteCat(id)
+	err := s.service.DeleteCat(id)
 	if err != nil {
 		common.WriteError(c, v.Err())
 		return
