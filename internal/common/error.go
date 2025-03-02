@@ -128,7 +128,7 @@ func WriteError(c *gin.Context, err error) {
 		code = http.StatusBadRequest
 		message = fmt.Sprintf("Invalid data in form:\n%s", err.Error())
 	case InvalidBreedError, MissionAssignedError, WrongCatIDError, TargetCompletedError, MissionCompletedError,
-		ManyMissionTargetsError, JSONParseError, FewMissionTargetsError:
+		ManyMissionTargetsError, JSONParseError, FewMissionTargetsError, TargetsDublicateError:
 		code = http.StatusBadRequest
 		message = err.Error()
 	case NoRowsError:
