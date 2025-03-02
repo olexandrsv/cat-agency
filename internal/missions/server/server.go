@@ -61,6 +61,7 @@ func (s *server) deleteMission(c *gin.Context){
 
 	if err := s.service.DeleteMission(id); err != nil {
 		common.WriteError(c, err)
+		return
 	}
 
 	c.JSON(http.StatusOK, "")

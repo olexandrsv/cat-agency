@@ -67,7 +67,11 @@ func (r *repo) DeleteMission(missionID int) error {
 func (r *repo) IsMissionCompleted(missionID int) (bool, error) {
 	row := r.db.QueryRow("SELECT complete FROM missions WHERE id=$1", missionID)
 	var b bool
-	if err := row.Scan(&b); err != nil {
+	err := row.Scan(&b)
+	if err == sql.ErrNoRows{
+		return false, common.NewNoRowsError(errors.WithStack(err))
+	}
+	if err != nil {
 		return false, common.NewDatabseError(err)
 	}
 	return b, nil
@@ -76,7 +80,11 @@ func (r *repo) IsMissionCompleted(missionID int) (bool, error) {
 func (r *repo) IsMissionAssigned(missionID int) (bool, error) {
 	row := r.db.QueryRow("SELECT cat_id FROM missions WHERE id=$1", missionID)
 	var s sql.NullString
-	if err := row.Scan(&s); err != nil {
+	err := row.Scan(&s)
+	if err == sql.ErrNoRows{
+		return false, common.NewNoRowsError(errors.WithStack(err))
+	}
+	if err != nil {
 		return false, common.NewDatabseError(err)
 	}
 	return s.Valid, nil
@@ -88,6 +96,9 @@ func (r *repo) deleteMission(tx *sql.Tx, missionID int) error {
 			SELECT target_id FROM mission_targets WHERE mission_id=$1
 		)
 	)`, missionID)
+	if err == sql.ErrNoRows{
+		return common.NewNoRowsError(errors.WithStack(err))
+	}
 	if err != nil {
 		return common.NewDatabseError(errors.WithStack(err))
 	}
