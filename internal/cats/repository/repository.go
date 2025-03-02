@@ -47,7 +47,7 @@ func (r *repo) DeleteCat(id int) error {
 		return common.NewDatabseError(errors.WithStack(err))
 	}
 
-	_, err = tx.Exec("UPDATE mission SET cat_id=null WHERE cat_id=$1", id)
+	_, err = tx.Exec("UPDATE missions SET cat_id=null WHERE cat_id=$1", id)
 	if err != nil {
 		err = executeRollback(tx, err)
 		return common.NewDatabseError(errors.WithStack(err))
