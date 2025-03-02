@@ -87,27 +87,6 @@ func (r *repo) linkTargetsToMission(tx *sql.Tx, missionID int, targetIDs []int) 
 	return nil
 }
 
-func (r *repo) missionTargetsIDs(missionID int) ([]int, error) {
-	rows, err := r.db.Query("SELECT target_id FROM mission_targets WHERE mission_id=$1", missionID)
-	if err == sql.ErrNoRows {
-		return nil, common.NewNoRowsError(errors.WithStack(err))
-	}
-	if err != nil {
-		return nil, common.NewDatabseError(errors.WithStack(err))
-	}
-
-	var ids []int
-	for rows.Next() {
-		var id int
-		if err := rows.Scan(&id); err != nil {
-			return nil, common.NewDatabseError(errors.WithStack(err))
-		}
-		ids = append(ids, id)
-	}
-
-	return ids, nil
-}
-
 func (r *repo) UpdateTarget(targetID int) error {
 	_, err := r.db.Exec("UPDATE targets SET complete=true WHERE id=$1", targetID)
 	if err != nil {
