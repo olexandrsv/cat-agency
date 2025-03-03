@@ -35,7 +35,7 @@ func main() {
 	engine.Run(":8080")
 }
 
-func openSQLConnection() *sql.DB{
+func openSQLConnection() *sql.DB {
 	db, err := sql.Open("sqlite3", "./../cat-agency")
 	if err != nil {
 		panic(err)
